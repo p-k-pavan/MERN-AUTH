@@ -60,7 +60,7 @@ export default function Profile() {
       />
       <form className="flex flex-col m-auto max-w-lg gap-4">
         <img
-          src={currentUser.profilePicture}
+          src={formData.profilePicture || currentUser.profilePicture}
           className="rounded-full w-24 h-24 self-center cursor-pointer"
           onClick={() => fileRef.current.click()}
         />
