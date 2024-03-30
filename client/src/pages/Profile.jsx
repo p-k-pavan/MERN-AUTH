@@ -86,7 +86,7 @@ export default function Profile() {
   };
 
   return (
-    <div>
+    <div className='p-3 max-w-lg mx-auto'>
       <h1 className="text-center my-8 text-3xl font-semibold ">Profile</h1>
     
       <form
@@ -154,7 +154,9 @@ export default function Profile() {
         <span className="hover:text-red-600 font-semibold cursor-pointer">
           Sign Out
         </span>
-      </div>
+      </div> 
+      <p className="m-auto text-red-600 font-semibold">{error && 'Something went worng!'}</p>
+      <p className="m-auto text-green-600 font-semibold">{updateSuccess && 'User is update successfully!'}</p>
     </div>
   );
 }
