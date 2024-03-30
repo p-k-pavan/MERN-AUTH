@@ -11,19 +11,22 @@ import {
   updateUserStart,
   updateUserSuccess,
   updateUserFailure,
+  deleteUserStart,
+  deleteUserSuccess,
+  deleteUserFailure,
 } from "../redux/user/userSlice";
 
 export default function Profile() {
   const fileRef = useRef(null);
   const [image, setImage] = useState(undefined);
- 
+
   const [imagePercent, setImagePercent] = useState(0);
   const [imageError, setImageError] = useState(false);
   const [formData, setFormData] = useState({});
   const dispatch = useDispatch();
-  const [updateSuccess,setUpdateSuccess]=useState(false);
+  const [updateSuccess, setUpdateSuccess] = useState(false);
 
-  const { currentUser,loading,error } = useSelector((state) => state.user);
+  const { currentUser, loading, error } = useSelector((state) => state.user);
 
   useEffect(() => {
     if (image) {
@@ -74,7 +77,6 @@ export default function Profile() {
       const data = await res.json();
       if (data.success === false) {
         dispatch(updateUserFailure(data));
-        console.log(data);
         return;
       }
 
@@ -85,22 +87,38 @@ export default function Profile() {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    try {
+      dispatch(deleteUserStart());
+      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(deleteUserFailure(data));
+        return;
+      }
+      dispatch(deleteUserSuccess(data));
+    } catch (error) {
+      dispatch(deleteUserFailure(error));
+    }
+  };
+
   return (
-    <div className='p-3 max-w-lg mx-auto'>
+    <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-center my-8 text-3xl font-semibold ">Profile</h1>
-    
+
       <form
         className="flex flex-col m-auto max-w-lg gap-4"
         onSubmit={handleSubmit}
       >
-
-<input
-        type="file"
-        ref={fileRef}
-        hidden
-        accept="image/*"
-        onChange={(e) => setImage(e.target.files[0])}
-      />
+        <input
+          type="file"
+          ref={fileRef}
+          hidden
+          accept="image/*"
+          onChange={(e) => setImage(e.target.files[0])}
+        />
         <img
           src={formData.profilePicture || currentUser.profilePicture}
           className="rounded-full w-24 h-24 self-center cursor-pointer"
@@ -144,19 +162,26 @@ export default function Profile() {
           onChange={handleChange}
         />
         <button className="bg-slate-600 text-white font-semibold p-3 rounded-lg hover:bg-slate-500">
-          {loading ? 'Loading...':"UPDATE"}
+          {loading ? "Loading..." : "UPDATE"}
         </button>
       </form>
-      <div className="flex m-auto justify-center max-w-lg justify-between my-4">
-        <span className="hover:text-red-600 font-semibold cursor-pointer">
+      <div className="flex m-auto max-w-lg justify-between my-4">
+        <span
+          className="hover:text-red-600 font-semibold cursor-pointer"
+          onClick={handleDeleteAccount}
+        >
           Delete Account
         </span>
         <span className="hover:text-red-600 font-semibold cursor-pointer">
           Sign Out
         </span>
-      </div> 
-      <p className="m-auto text-red-600 font-semibold">{error && 'Something went worng!'}</p>
-      <p className="m-auto text-green-600 font-semibold">{updateSuccess && 'User is update successfully!'}</p>
+      </div>
+      <p className="m-auto text-red-600 font-semibold">
+        {error && "Something went worng!"}
+      </p>
+      <p className="m-auto text-green-600 font-semibold">
+        {updateSuccess && "User is update successfully!"}
+      </p>
     </div>
   );
 }
